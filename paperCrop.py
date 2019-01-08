@@ -1,33 +1,36 @@
 import os, sys
 from PIL import Image
 
-overlap = 30
+overlap = 50
 kindle2Y = [718,965]
+kobo_forma = [1440,1920]
 rotateString = ""
 
 mode = sys.argv[1]
 file = sys.argv[2]
 
+resolution = kobo_forma
+
 if mode is 'p':
-    step = kindle2Y[1] - overlap
-    x = kindle2Y[0]
-    y = kindle2Y[1]
+    step = resolution[1] - overlap
+    x = resolution[0]
+    y = resolution[1]
 
 elif mode is 'l':
-    step = kindle2Y[0] - overlap
-    x = kindle2Y[1]
-    y = kindle2Y[0]
+    step = resolution[0] - overlap
+    x = resolution[1]
+    y = resolution[0]
     rotateString = "-rotate -90"
 
 def getPngHeight(filePath):
-    print os.path.dirname(filePath)
+    print(os.path.dirname(filePath))
     img = Image.open(filePath)
     imageSize = img.size
     return imageSize[1]
 
 def crop(startY,x,y):
-    cmd = "magick convert  -crop x"+str(y)+"+0+"+ str(startY)+" " +rotateString+" image.png result"+str(startY/step)+".png"
-    print cmd
+    cmd = "magick convert -quality 100 -crop x"+str(y)+"+0+"+ str(startY)+" " +rotateString+" {} result".format(file)+str(startY//step)+".png"
+    print(cmd)
     os.system(cmd)
 
 height = getPngHeight(file)
